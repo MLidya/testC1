@@ -8,7 +8,7 @@
 </head> 
 
 <body> 
-
+<details>
   <table id="controls">
     <tr>
       <td colspan="2">
@@ -62,16 +62,21 @@
       <td><input id="fogDensity" type='range' min='0' max='50' title="integer (0-50)"></td>
     </tr>
   </table>
-
-  <div id='instructions'>
-    <p>Use the <b>arrow keys</b> to drive the car.</p>
-  </div>
+</details>
+  
 
   <div id="racer">
     <canvas id="canvas">
       Sorry, this example cannot be run because your browser does not support the &lt;canvas&gt; element
     </canvas>
     Loading...
+	
+  </div>
+  <div id="buttons">
+	<button onclick="MoveLeft()" id="LeftB"> Left </button>
+	<button onclick="MoveCenter()" id="CenterB"> Center </button>  
+	<button onclick="MoveRight()" id="RightB"> Right </button>
+
   </div>
 
   <audio id='music'>
@@ -79,6 +84,11 @@
     <source src="music/racer.mp3">
   </audio>
   <span id="mute"></span>
+  </br>
+ 
+
+
+
 
   <script src="stats.js"></script>
   <script src="common.js"></script>
@@ -118,8 +128,24 @@
 
     var keyLeft       = false;
     var keyRight      = false;
-    var keyFaster     = false;
+    var keyFaster     = true;
     var keySlower     = false;
+	
+	var x = 0;
+	var y = 0;
+	var z = 0;
+
+function MoveLeft() {
+playerX = playerX - 0.05;
+}
+
+function MoveCenter() {
+    playerX=0;
+}
+
+function MoveRight() {
+    playerX = playerX + 0.05;
+}
 
     //=========================================================================
     // UPDATE THE GAME WORLD
@@ -130,6 +156,10 @@
       position = Util.increase(position, dt * speed, trackLength);
 
       var dx = dt * 2 * (speed/maxSpeed); // at top speed, should be able to cross from left to right (-1 to 1) in 1 second
+	
+    document.onmousemove = function(e){
+    cursorX = e.pageX;
+    cursorY = e.pageY;
 
       if (keyLeft)
         playerX = playerX - dx;
@@ -145,7 +175,7 @@
 
       if (((playerX < -1) || (playerX > 1)) && (speed > offRoadLimit))
         speed = Util.accelerate(speed, offRoadDecel, dt);
-
+}
       playerX = Util.limit(playerX, -2, 2);     // dont ever let player go too far out of bounds
       speed   = Util.limit(speed, 0, maxSpeed); // or exceed maxSpeed
 
@@ -239,11 +269,11 @@
       keys: [
         { keys: [KEY.LEFT,  KEY.A], mode: 'down', action: function() { keyLeft   = true;  } },
         { keys: [KEY.RIGHT, KEY.D], mode: 'down', action: function() { keyRight  = true;  } },
-        { keys: [KEY.UP,    KEY.W], mode: 'down', action: function() { keyFaster = true;  } },
+        
         { keys: [KEY.DOWN,  KEY.S], mode: 'down', action: function() { keySlower = true;  } },
         { keys: [KEY.LEFT,  KEY.A], mode: 'up',   action: function() { keyLeft   = false; } },
         { keys: [KEY.RIGHT, KEY.D], mode: 'up',   action: function() { keyRight  = false; } },
-        { keys: [KEY.UP,    KEY.W], mode: 'up',   action: function() { keyFaster = false; } },
+        
         { keys: [KEY.DOWN,  KEY.S], mode: 'up',   action: function() { keySlower = false; } }
       ],
       ready: function(images) {
